@@ -1,0 +1,21 @@
+name: "BleModuleA"
+displayName: "YK Oximeter"
+screenDisplayName: "Pulse Oximeter"
+
+services:
+  # Pulse Oximeter Service (Custom UUID)
+  - uuid: "cdeacd80-5235-4c07-8846-93a37ee6b86d"
+    characteristics:
+      - uuid: "cdeacd81-5235-4c07-8846-93a37ee6b86d"
+        name: "measurement"
+        properties: ["notify", "read"]
+        initial: ""
+        encoder:
+          type: "pulse-oximeter"
+        
+      - uuid: "cdeacd82-5235-4c07-8846-93a37ee6b86d"
+        name: "tx"
+        properties: ["write", "writeWithoutResponse"]
+        initial: ""
+        encoder:
+          type: "text"

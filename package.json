@@ -1,0 +1,31 @@
+{
+    "name": "ble-simulator",
+    "version": "1.0.0",
+    "description": "BLE Peripheral Simulator with YAML configuration",
+    "main": "dist/index.js",
+    "type": "module",
+    "scripts": {
+        "build": "tsc",
+        "start": "npm run build && node dist/index.js",
+        "dev": "node --import tsx --no-warnings ./src/index.ts",
+        "clean": "rm -rf dist"
+    },
+    "keywords": [
+        "bluetooth",
+        "ble",
+        "peripheral",
+        "simulator"
+    ],
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "@abandonware/bleno": "^0.6.2",
+        "js-yaml": "^4.1.0"
+    },
+    "devDependencies": {
+        "@types/node": "^22.9.0",
+        "@types/js-yaml": "^4.0.9",
+        "typescript": "^5.6.3",
+        "tsx": "^4.19.2"
+    }
+}
