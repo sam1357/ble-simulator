@@ -1,4 +1,4 @@
-import bleno from "@abandonware/bleno";
+import bleno from "@stoprocent/bleno";
 import { createCharacteristic } from "./characteristic";
 import type { ServiceConfig } from "../types";
 

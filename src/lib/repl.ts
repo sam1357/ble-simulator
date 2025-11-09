@@ -10,7 +10,6 @@ import type { DeviceConfig } from "../types";
 import fs from "fs";
 import yaml from "js-yaml";
 import path from "path";
-import bleno from "@abandonware/bleno";
 
 let rl: readline.Interface;
 let availableConfigs: Map<string, string> = new Map();
@@ -31,8 +30,6 @@ function loadAvailableConfigs() {
   for (const file of files) {
     const fullPath = path.join(configsDir, file);
     try {
-      const content = fs.readFileSync(fullPath, "utf8");
-      const config = yaml.load(content) as DeviceConfig;
       const key = file.replace(/\.(yaml|yml)$/, "");
       availableConfigs.set(key, fullPath);
       configByNumber.set(index, key);
@@ -75,7 +72,6 @@ export function startREPL(): void {
     const parts = input.split(/\s+/);
     const cmd = parts[0].toLowerCase();
 
-    // Handle async commands
     (async () => {
       switch (cmd) {
         case "help":
@@ -83,9 +79,6 @@ export function startREPL(): void {
           break;
 
         case "list":
-          bleno.disconnect();
-          bleno.removeAllListeners();
-          bleno.stopAdvertising(); // --- IGNORE ---
           listCharacteristics();
           break;
 
@@ -133,7 +126,6 @@ export function startREPL(): void {
             console.log("Use 'devices' to see available devices");
           } else {
             const deviceId = parts[1];
-            // Check if it's a number
             const num = parseInt(deviceId);
             if (!isNaN(num) && configByNumber.has(num)) {
               await switchDevice(configByNumber.get(num)!);
@@ -195,16 +187,6 @@ function showHelp(): void {
   console.log("  help                      - Show this help");
   console.log("  exit/quit                 - Exit the program");
   console.log("");
-  console.log("Examples:");
-  console.log(
-    "  switch 2                                     (switch to device #2)"
-  );
-  console.log(
-    "  write blood-pressure-measurement 120 80 72  (systolic, diastolic, pulse)"
-  );
-  console.log("  notify measurement 98 72                     (spo2%, pulse)");
-  console.log("  write weight-measurement 75.5 kg            (weight, unit)");
-  console.log("  write battery-level 95                       (battery %)");
 }
 
 function listCharacteristics(): void {
@@ -242,7 +224,6 @@ function writeCharacteristic(name: string, values: string[]): void {
     return;
   }
 
-  // Check if characteristic has an encoder
   const encoderType = handle.config.encoder?.type;
   let buffer: Buffer;
 
@@ -254,7 +235,6 @@ function writeCharacteristic(name: string, values: string[]): void {
     }
 
     try {
-      // Parse values based on encoder type
       const args = parseEncoderArgs(encoderType, values);
       buffer = encoder.encode(...args);
       handle.value = buffer;
@@ -267,7 +247,6 @@ function writeCharacteristic(name: string, values: string[]): void {
       return;
     }
   } else {
-    // No encoder, treat as text
     buffer = Buffer.from(values.join(" "));
     handle.value = buffer;
     console.log(`✅ Write: ${name} = "${values.join(" ")}"`);
@@ -287,7 +266,6 @@ function notifyCharacteristic(name: string, values: string[]): void {
     return;
   }
 
-  // Check if characteristic has an encoder
   const encoderType = handle.config.encoder?.type;
   let buffer: Buffer;
 
@@ -299,7 +277,6 @@ function notifyCharacteristic(name: string, values: string[]): void {
     }
 
     try {
-      // Parse values based on encoder type
       const args = parseEncoderArgs(encoderType, values);
       buffer = encoder.encode(...args);
       handle.value = buffer;
@@ -315,7 +292,6 @@ function notifyCharacteristic(name: string, values: string[]): void {
       return;
     }
   } else {
-    // No encoder, treat as text
     buffer = Buffer.from(values.join(" "));
     handle.value = buffer;
     handle.updateValueCallback(buffer);
@@ -363,31 +339,21 @@ function parseEncoderArgs(encoderType: string, values: string[]): any[] {
 
     case "battery-level":
     case "uint8":
-      // Single number 0-255
       return [parseInt(values[0])];
 
     case "uint16":
-      // Single number 0-65535
       return [parseInt(values[0])];
 
     case "uint32":
-      // Single number
       return [parseInt(values[0])];
 
     case "heart-rate":
-      // heart rate value
       return [parseInt(values[0])];
 
-    case "temperature":
-      // temperature value
-      return [parseFloat(values[0])];
-
     case "text":
-      // Join all values as text
       return [values.join(" ")];
 
     default:
-      // Default: try to parse numbers, fallback to strings
       return values.map((v) => {
         const num = parseFloat(v);
         return isNaN(num) ? v : num;
@@ -404,7 +370,6 @@ function listDevices(): void {
   const current = getCurrentConfig();
   console.log("Available devices:");
 
-  // Get sorted entries by number
   const sortedEntries = Array.from(configByNumber.entries()).sort(
     (a, b) => a[0] - b[0]
   );
@@ -452,11 +417,7 @@ async function switchDevice(deviceName: string): Promise<void> {
     const config = yaml.load(content) as DeviceConfig;
 
     console.log(`Switching to ${config.displayName || config.name}...`);
-
     await stopPeripheral();
-
-    await new Promise((resolve) => setTimeout(resolve, 20000));
-
     console.log("Starting new device...");
 
     return new Promise<void>((resolve, reject) => {

@@ -1,6 +1,3 @@
-// Registry of encoder functions for different BLE characteristics
-// This allows YAML configs to specify which encoder to use
-
 import { encodeSFloat } from "./utils";
 
 export interface EncoderInfo {
@@ -13,7 +10,6 @@ export interface EncoderRegistry {
   [key: string]: EncoderInfo;
 }
 
-// Registry of available encoders
 export const encoders: EncoderRegistry = {
   "blood-pressure": {
     encode: (systolic: number, diastolic: number, pulseRate: number) => {
@@ -48,7 +44,7 @@ export const encoders: EncoderRegistry = {
 
       buffer.writeUInt8(flags, 0);
       buffer.writeUInt8(spo2, 1); // SpO2 percentage
-      buffer.writeUInt16LE(pulseRate * 10, 2); // Pulse rate (SFLOAT-like)
+      buffer.writeUInt16LE(pulseRate * 10, 2); // Pulse rate
 
       if (perfusionIndex !== undefined) {
         buffer.writeUInt8(Math.round(perfusionIndex * 10), 4);

@@ -1,6 +1,5 @@
 import type { Registry } from "../types";
 
-// Stores all characteristic handles
 export const registry: Registry = {};
 
 export function clearRegistry() {

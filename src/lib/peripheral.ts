@@ -1,4 +1,4 @@
-import bleno from "@abandonware/bleno";
+import bleno from "@stoprocent/bleno";
 import { createService } from "./service";
 import { registry, clearRegistry } from "./registry";
 import type { DeviceConfig } from "../types";
@@ -14,12 +14,6 @@ export function stopPeripheral(): Promise<void> {
       resolve();
       return;
     }
-
-    console.log("[BLE] Stopping peripheral...");
-
-    // Step 3: Clear services (don't wait for callback as it may not fire)
-    console.log("[BLE] Clearing services...");
-    bleno.setServices([]);
 
     bleno.stopAdvertising();
     isAdvertising = false;
@@ -59,7 +53,7 @@ export function startPeripheral(
       }
     });
 
-    bleno.on("advertisingStart", (err: Error | null) => {
+    bleno.on("advertisingStart", (err?: Error | null) => {
       if (err) {
         console.error("Error in advertisingStart:", err);
         return;
@@ -74,7 +68,7 @@ export function startPeripheral(
         createService(svcConfig)
       );
 
-      bleno.setServices(services, (err: Error | null) => {
+      bleno.setServices(services, (err?: Error | null) => {
         if (err) {
           console.error("Error setting services:", err);
           return;
@@ -123,7 +117,7 @@ function startAdvertisingForConfig(config: DeviceConfig): void {
   bleno.startAdvertising(
     config.name,
     services.map((s) => s.uuid),
-    (err: Error | null) => {
+    (err?: Error | null) => {
       console.log("[BLE] startAdvertising callback");
       if (err) {
         console.error("Error starting advertising:", err);

@@ -1,4 +1,4 @@
-import bleno, { type Property } from "@abandonware/bleno";
+import bleno, { ConnectionHandle, type Property } from "@stoprocent/bleno";
 import { registry } from "./registry";
 import type { CharacteristicConfig } from "../types";
 
@@ -20,6 +20,7 @@ export function createCharacteristic(
     properties: properties,
 
     onReadRequest: function (
+      _handle: ConnectionHandle,
       _offset: number,
       callback: (result: number, data?: Buffer) => void
     ) {
@@ -28,6 +29,7 @@ export function createCharacteristic(
     },
 
     onWriteRequest: function (
+      _handle: ConnectionHandle,
       data: Buffer,
       _offset: number,
       _withoutResponse: boolean,
@@ -39,6 +41,7 @@ export function createCharacteristic(
     },
 
     onSubscribe: function (
+      _handle: ConnectionHandle,
       _maxValueSize: number,
       updateValueCallback: (data: Buffer) => void
     ) {
