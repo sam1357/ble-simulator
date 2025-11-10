@@ -8,22 +8,15 @@ let currentConfig: DeviceConfig | null = null;
 let eventListenersSet = false;
 let pendingCallback: (() => void) | null = null;
 
-export function stopPeripheral(): Promise<void> {
-  return new Promise((resolve) => {
-    if (!isAdvertising) {
-      resolve();
-      return;
-    }
+export function stopPeripheral(): void {
+  if (!isAdvertising) {
+    return;
+  }
 
-    bleno.stopAdvertising();
-    isAdvertising = false;
-    clearRegistry();
-    pendingCallback = null;
-
-    setTimeout(() => {
-      resolve();
-    }, 500);
-  });
+  bleno.stopAdvertising();
+  isAdvertising = false;
+  clearRegistry();
+  pendingCallback = null;
 }
 
 export function getCurrentConfig(): DeviceConfig | null {

@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import fs from "fs";
 import yaml from "js-yaml";
 import { startPeripheral } from "./lib/peripheral";

@@ -14,7 +14,7 @@ export const encoders: EncoderRegistry = {
   "blood-pressure": {
     encode: (systolic: number, diastolic: number, pulseRate: number) => {
       const flags = 0x04; // Bit 2: Pulse Rate present
-      const size = 9; // buffer size
+      const size = 7; // buffer size
 
       const buffer = Buffer.alloc(size);
       let offset = 0;
@@ -23,8 +23,6 @@ export const encoders: EncoderRegistry = {
       buffer.writeUInt16LE(encodeSFloat(systolic), offset);
       offset += 2;
       buffer.writeUInt16LE(encodeSFloat(diastolic), offset);
-      offset += 2;
-      buffer.writeUInt16LE(encodeSFloat((systolic + diastolic) / 3), offset); // Mean Arterial Pressure
       offset += 2;
       buffer.writeUInt16LE(encodeSFloat(pulseRate), offset);
       offset += 2;
@@ -36,24 +34,19 @@ export const encoders: EncoderRegistry = {
   },
 
   "pulse-oximeter": {
-    encode: (spo2: number, pulseRate: number, perfusionIndex?: number) => {
-      // Pulse Oximeter Measurement format
-      const flags = perfusionIndex !== undefined ? 0x01 : 0x00;
-      const size = perfusionIndex !== undefined ? 5 : 4;
-      const buffer = Buffer.alloc(size);
+    encode: (spo2: number, pulseRate: number) => {
+      const buffer = Buffer.alloc(10);
 
-      buffer.writeUInt8(flags, 0);
+      buffer.writeUInt8(0x81, 0); // Flag byte
       buffer.writeUInt8(spo2, 1); // SpO2 percentage
-      buffer.writeUInt16LE(pulseRate * 10, 2); // Pulse rate
-
-      if (perfusionIndex !== undefined) {
-        buffer.writeUInt8(Math.round(perfusionIndex * 10), 4);
-      }
+      buffer.writeUInt8(pulseRate, 2); // Pulse rate
+      buffer.writeUInt8(0, 4); // Required zero byte
+      buffer.writeUInt8(0, 9); // Required zero byte
 
       return buffer;
     },
     description: "Pulse Oximeter Measurement - SpO2 and pulse rate",
-    example: "spo2 98 72 (SpO2%, pulse rate)",
+    example: "98 72 (SpO2%, pulse rate)",
   },
 
   "weight-scale": {
@@ -74,7 +67,7 @@ export const encoders: EncoderRegistry = {
       return buffer;
     },
     description: "Weight Scale Measurement (0x2A9D)",
-    example: "weight 75.5 or weight 165 lb",
+    example: "75.5 or 165 lb",
   },
 
   "battery-level": {
@@ -128,12 +121,4 @@ export const encoders: EncoderRegistry = {
 
 export function getEncoder(name: string): EncoderInfo | undefined {
   return encoders[name];
-}
-
-export function listEncoders(): void {
-  console.log("\nAvailable Encoders:");
-  for (const [name, config] of Object.entries(encoders)) {
-    console.log(`  ${name.padEnd(20)} - ${config.description}`);
-    console.log(`  ${"".padEnd(20)}   Example: ${config.example}`);
-  }
 }

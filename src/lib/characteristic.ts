@@ -1,19 +1,20 @@
 import bleno, { ConnectionHandle, type Property } from "@stoprocent/bleno";
 import { registry } from "./registry";
 import type { CharacteristicConfig } from "../types";
+import chalk from "chalk";
 
 export function createCharacteristic(
   config: CharacteristicConfig
 ): InstanceType<typeof bleno.Characteristic> {
   const properties = config.properties.map((p) => p.toLowerCase() as Property);
 
-  const handle = {
+  const myHandle = {
     config: config,
     value: Buffer.from(config.initial || ""),
     updateValueCallback: null as ((data: Buffer) => void) | null,
   };
 
-  registry[config.name] = handle;
+  registry[config.name] = myHandle;
 
   const characteristic = new bleno.Characteristic({
     uuid: config.uuid,
@@ -24,8 +25,8 @@ export function createCharacteristic(
       _offset: number,
       callback: (result: number, data?: Buffer) => void
     ) {
-      console.log(`[READ] ${config.name} <- ${handle.value.toString()}`);
-      callback(bleno.Characteristic.RESULT_SUCCESS, handle.value);
+      console.log(`[READ] ${config.name} <- ${myHandle.value.toString()}`);
+      callback(bleno.Characteristic.RESULT_SUCCESS, myHandle.value);
     },
 
     onWriteRequest: function (
@@ -35,7 +36,7 @@ export function createCharacteristic(
       _withoutResponse: boolean,
       callback: (result: number) => void
     ) {
-      handle.value = Buffer.from(data);
+      myHandle.value = Buffer.from(data);
       console.log(`[WRITE] ${config.name} -> ${data.toString()}`);
       callback(bleno.Characteristic.RESULT_SUCCESS);
     },
@@ -45,13 +46,13 @@ export function createCharacteristic(
       _maxValueSize: number,
       updateValueCallback: (data: Buffer) => void
     ) {
-      console.log(`[SUBSCRIBE] ${config.name}`);
-      handle.updateValueCallback = updateValueCallback;
+      console.log(`🔗 ${chalk.gray("[SUBSCRIBE]")} ${config.name}`);
+      myHandle.updateValueCallback = updateValueCallback;
     },
 
-    onUnsubscribe: function () {
-      console.log(`[UNSUBSCRIBE] ${config.name}`);
-      handle.updateValueCallback = null;
+    onUnsubscribe: function (handle: ConnectionHandle) {
+      console.log(`💥 ${chalk.gray("[UNSUBSCRIBE]")} ${config.name}`);
+      myHandle.updateValueCallback = null;
     },
   });
 

@@ -1,26 +1,21 @@
 name: "A&D_UC-352BLE"
 displayName: "A&D UC-352 Weight Scale"
-screenDisplayName: "Weight Scale"
 
 services:
-  # Weight Scale Service
   - uuid: "0000181d-0000-1000-8000-00805f9b34fb"
     characteristics:
       - uuid: "00002a9d-0000-1000-8000-00805f9b34fb"
         name: "weight"
         properties: ["indicate"]
-        initial: ""
         encoder:
           type: "weight-scale"
         
       - uuid: "00002a9e-0000-1000-8000-00805f9b34fb"
         name: "weight-scale-feature"
         properties: ["read"]
-        initial: ""
         encoder:
           type: "uint32"
 
-  # Battery Service
   - uuid: "0000180f-0000-1000-8000-00805f9b34fb"
     characteristics:
       - uuid: "00002a19-0000-1000-8000-00805f9b34fb"
@@ -30,19 +25,11 @@ services:
         encoder:
           type: "battery-level"
 
-  # Device Information Service
   - uuid: "0000180a-0000-1000-8000-00805f9b34fb"
     characteristics:
       - uuid: "00002a23-0000-1000-8000-00805f9b34fb"
         name: "system-id"
         properties: ["read"]
         initial: "UC-352BLE"
-        encoder:
-          type: "text"
-      
-      - uuid: "00002a08-0000-1000-8000-00805f9b34fb"
-        name: "date-time"
-        properties: ["read", "write"]
-        initial: "2025-11-10T00:00:00"
         encoder:
           type: "text"

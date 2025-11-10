@@ -1,4 +1,5 @@
 name: "A&D_UA-651BLE"
+displayName: "A&D UA-651 Blood Pressure Monitor"
 
 services:
   - uuid: "00001810-0000-1000-8000-00805f9b34fb"
@@ -6,14 +7,12 @@ services:
       - uuid: "00002a35-0000-1000-8000-00805f9b34fb"
         name: "bp"
         properties: ["indicate"]
-        initial: ""
         encoder:
           type: "blood-pressure"
         
       - uuid: "00002a49-0000-1000-8000-00805f9b34fb"
-        name: "blood-pressure-feature"
+        name: "bp-feature"
         properties: ["read"]
-        initial: ""
         encoder:
           type: "uint32"
 

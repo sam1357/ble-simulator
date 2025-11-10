@@ -16,7 +16,6 @@ export interface ServiceConfig {
 export interface DeviceConfig {
   name: string;
   displayName?: string;
-  screenDisplayName?: string;
   services: ServiceConfig[];
 }
 
