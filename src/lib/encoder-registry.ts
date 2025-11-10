@@ -14,7 +14,7 @@ export const encoders: EncoderRegistry = {
   "blood-pressure": {
     encode: (systolic: number, diastolic: number, pulseRate: number) => {
       const flags = 0x04; // Bit 2: Pulse Rate present
-      const size = 7; // buffer size
+      const size = 9; // buffer size
 
       const buffer = Buffer.alloc(size);
       let offset = 0;
@@ -23,6 +23,8 @@ export const encoders: EncoderRegistry = {
       buffer.writeUInt16LE(encodeSFloat(systolic), offset);
       offset += 2;
       buffer.writeUInt16LE(encodeSFloat(diastolic), offset);
+      offset += 2;
+      buffer.writeUInt16LE(encodeSFloat((systolic + diastolic) / 3), offset); // Mean Arterial Pressure, not really used but required for offsets
       offset += 2;
       buffer.writeUInt16LE(encodeSFloat(pulseRate), offset);
       offset += 2;

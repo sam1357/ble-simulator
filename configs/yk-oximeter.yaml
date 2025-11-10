@@ -9,12 +9,6 @@ services:
         properties: ["notify", "read"]
         encoder:
           type: "pulse-oximeter"
-        
-      - uuid: "cdeacd82-5235-4c07-8846-93a37ee6b86d"
-        name: "tx"
-        properties: ["write", "writeWithoutResponse"]
-        encoder:
-          type: "text"
 
   - uuid: "0000180a-0000-1000-8000-00805f9b34fb"
     characteristics:
