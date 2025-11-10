@@ -219,7 +219,7 @@ export class CommandHandlers {
       }
     }
 
-    console.log(chalk.gray("\n   Switch using: switch <number|name>\n"));
+    console.log(chalk.gray("\n   Switch using: switch <number|name>"));
   }
 
   resolveDeviceArg(arg: string): string | null {

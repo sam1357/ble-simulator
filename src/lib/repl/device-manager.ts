@@ -78,7 +78,7 @@ export class DeviceManager {
             )
           );
           console.log(
-            chalk.gray(`   Use 'list' to see available characteristics\n`)
+            chalk.gray(`   Use 'list' to see available characteristics`)
           );
           resolve();
         });
