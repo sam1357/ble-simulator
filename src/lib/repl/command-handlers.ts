@@ -266,7 +266,7 @@ export class CommandHandlers {
         // Expect: spo2 pulse
         if (values.length < 2) {
           throw new Error(
-            "Pulse oximeter requires at least 2 values: spo2% pulse [perfusionIndex]"
+            "Pulse oximeter requires at least 2 values: spo2% pulse"
           );
         }
         return [
@@ -276,10 +276,11 @@ export class CommandHandlers {
         ];
 
       case "weight-scale":
-        // Expect: weight [unit] [bmi] [height]
+        // bmi and height are supported but not used
+        // Expect: weight [unit]
         if (values.length < 1) {
           throw new Error(
-            "Weight scale requires at least 1 value: weight [kg|lb] [bmi] [height]"
+            "Weight scale requires at least 1 value: weight [kg|lb]"
           );
         }
         return [
